@@ -29,6 +29,6 @@ function changeBodyBgcolor(color) {
 }
 
 function styleButtonsAsRunning(isRunning) {
-  startButtonEl.disabled = isRunning ? true : false;
-  stopButtonEl.disabled = isRunning ? false : true;
+  startButtonEl.disabled = isRunning;
+  stopButtonEl.disabled = !isRunning;
 }
