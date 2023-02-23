@@ -1,7 +1,10 @@
 // Описаний в документації
 import flatpickr from 'flatpickr';
+import Notiflix from 'notiflix';
 // Додатковий імпорт стилів
 import 'flatpickr/dist/flatpickr.min.css';
+
+// Get DOM elements
 
 const scoreboardEl = {
   days: document.querySelector('[data-days]'),
@@ -9,10 +12,9 @@ const scoreboardEl = {
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
 };
-
 const startButtonEl = document.querySelector('[data-start]');
+
 startButtonEl.disabled = true;
-let intervalID = null;
 
 const options = {
   enableTime: true,
@@ -21,10 +23,9 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     const chosenDate = selectedDates[0];
-    console.log(chosenDate);
-    if (chosenDate < options.defaultDate)
-      alert('Please choose a date in the future');
-    else {
+    if (chosenDate < options.defaultDate) {
+      Notiflix.Notify.failure('Please choose a date in the future');
+    } else {
       startButtonEl.disabled = false;
       startButtonEl.addEventListener('click', () => onStartButton(chosenDate), {
         once: true,
@@ -36,17 +37,21 @@ const options = {
 flatpickr('input#datetime-picker', options);
 
 function onStartButton(chosenDate) {
-  intervalID = setInterval(() => showRemainingTime(chosenDate), 1000);
+  startButtonEl.disabled = true;
+  const intervalID = setInterval(() => {
+    intervalFunc(chosenDate, intervalID);
+  }, 1000);
 }
 
-function showRemainingTime(date) {
-  let delta = date - new Date();
+// Function for calculating and refreshing remaining time
+
+function intervalFunc(chosenDate, intervalID) {
+  let delta = chosenDate - new Date();
   if (delta < 0) {
     clearInterval(intervalID);
     delta = 0;
   }
-  const out = convertMs(delta);
-  castToScreen(out);
+  castToScreen(convertMs(delta));
 }
 
 function convertMs(ms) {
@@ -69,9 +74,13 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
+// Add leading zeros to digits for time
+
 function addLeadingZero(number) {
   return number.toString().padStart(2, '0');
 }
+
+// Show remaining time on screen
 
 function castToScreen(data) {
   scoreboardEl.days.textContent = data.days;
