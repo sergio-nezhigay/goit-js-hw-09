@@ -34,13 +34,13 @@ function createPromise(position, delay) {
     setTimeout(() => {
       if (shouldResolve) {
         resolve({
-          position: position,
-          delay: delay,
+          position,
+          delay,
         });
       } else {
         reject({
-          position: position,
-          delay: delay,
+          position,
+          delay,
         });
       }
     }, delay);

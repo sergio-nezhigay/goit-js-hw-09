@@ -14,6 +14,11 @@ const scoreboardEl = {
 };
 const startButtonEl = document.querySelector('[data-start]');
 
+startButtonEl.addEventListener('click', onStartButtonClick);
+
+let chosenDate = null;
+let intervalID = null;
+
 startButtonEl.disabled = true;
 Notiflix.Notify.init({
   clickToClose: true,
@@ -25,37 +30,41 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    const chosenDate = selectedDates[0];
+    [chosenDate] = selectedDates;
     if (chosenDate < options.defaultDate) {
       Notiflix.Notify.failure('Please choose a date in the future');
+      fullCounterReset();
     } else {
       startButtonEl.disabled = false;
-      startButtonEl.addEventListener('click', () => onStartButton(chosenDate), {
-        once: true,
-      });
     }
   },
 };
 
 flatpickr('input#datetime-picker', options);
 
-function onStartButton(chosenDate) {
+function onStartButtonClick() {
   startButtonEl.disabled = true;
-  const intervalID = setInterval(() => {
-    intervalFunc(chosenDate, intervalID);
+  intervalID = setInterval(() => {
+    intervalFunc();
   }, 1000);
 }
 
 // Function for calculating and refreshing remaining time
 
-function intervalFunc(chosenDate, intervalID) {
+function fullCounterReset() {
+  if (intervalID) {
+    clearInterval(intervalID);
+    intervalID = null;
+  }
+  startButtonEl.disabled = true;
+  castToScreen(convertMs(0));
+}
+
+function intervalFunc() {
   let delta = chosenDate - new Date();
   if (delta < 0) {
-    clearInterval(intervalID);
-    delta = 0;
-    startButtonEl.disabled = false;
-  }
-  castToScreen(convertMs(delta));
+    fullCounterReset();
+  } else castToScreen(convertMs(delta));
 }
 
 function convertMs(ms) {
@@ -66,15 +75,13 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  const days = addLeadingZero(Math.floor(ms / day));
+  const days = Math.floor(ms / day);
   // Remaining hours
-  const hours = addLeadingZero(Math.floor((ms % day) / hour));
+  const hours = Math.floor((ms % day) / hour);
   // Remaining minutes
-  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
+  const minutes = Math.floor(((ms % day) % hour) / minute);
   // Remaining seconds
-  const seconds = addLeadingZero(
-    Math.floor((((ms % day) % hour) % minute) / second)
-  );
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
   return { days, hours, minutes, seconds };
 }
 
@@ -87,8 +94,8 @@ function addLeadingZero(number) {
 // Show remaining time on screen
 
 function castToScreen(data) {
-  scoreboardEl.days.textContent = data.days;
-  scoreboardEl.hours.textContent = data.hours;
-  scoreboardEl.minutes.textContent = data.minutes;
-  scoreboardEl.seconds.textContent = data.seconds;
+  scoreboardEl.days.textContent = addLeadingZero(data.days);
+  scoreboardEl.hours.textContent = addLeadingZero(data.hours);
+  scoreboardEl.minutes.textContent = addLeadingZero(data.minutes);
+  scoreboardEl.seconds.textContent = addLeadingZero(data.seconds);
 }
