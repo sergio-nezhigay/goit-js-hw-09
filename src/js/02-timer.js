@@ -15,6 +15,9 @@ const scoreboardEl = {
 const startButtonEl = document.querySelector('[data-start]');
 
 startButtonEl.disabled = true;
+Notiflix.Notify.init({
+  clickToClose: true,
+});
 
 const options = {
   enableTime: true,
@@ -50,6 +53,7 @@ function intervalFunc(chosenDate, intervalID) {
   if (delta < 0) {
     clearInterval(intervalID);
     delta = 0;
+    startButtonEl.disabled = false;
   }
   castToScreen(convertMs(delta));
 }
