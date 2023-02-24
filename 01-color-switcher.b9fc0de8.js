@@ -1,2 +1,0 @@
-!function(){var t=document.querySelector("[data-start]"),e=document.querySelector("[data-stop]"),n=document.querySelector("body");function o(n){t.disabled=n,e.disabled=!n}t.addEventListener("click",(function(){intervalID=setInterval((function(){var t;t="#".concat(Math.floor(16777215*Math.random()).toString(16)),n.style.backgroundColor=t}),1e3),e.addEventListener("click",(function(){clearInterval(intervalID),o(!1)}),{once:!0}),o(!0)})),o(!1)}();
-//# sourceMappingURL=01-color-switcher.b9fc0de8.js.map
