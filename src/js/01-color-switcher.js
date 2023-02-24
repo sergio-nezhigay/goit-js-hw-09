@@ -6,7 +6,7 @@ startButtonEl.addEventListener('click', onStartClick);
 styleButtonsAsRunning(false);
 
 function onStartClick() {
-  intervalID = setInterval(() => {
+  const intervalID = setInterval(() => {
     changeBodyBgcolor(getRandomHexColor());
   }, 1000);
   stopButtonEl.addEventListener(
