@@ -6,7 +6,6 @@ function onSubmit(e) {
   e.preventDefault();
   const { amount, delay, step } = e.currentTarget.elements;
   createPromises(+amount.value, +delay.value, +step.value);
-  e.reset();
 }
 
 function createPromises(amount, delay, step) {
